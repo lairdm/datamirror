@@ -1,0 +1,12 @@
+
+# Where to backup from
+SRCDIR=/mnt/data/
+# Where to backup to
+BACKUPDIR=/mnt/vault/
+
+# Needed to send emails with backup results
+EMAILTO="myemailaddress"
+
+# These can be overridden
+#EMAILSUBJ="Finished backup: ${SRCDIR}"
+#EMAILMSG="/tmp/message.txt"
