@@ -105,7 +105,7 @@ for d in *; do
     fi
 
     echo "/usr/bin/rsync -av --delete --safe-links $excludes $WORKINGDIR/$d $BACKUPDIR"
-    /usr/bin/rsync -av --delete --safe-links $excludes $SRCDIR/$d $BACKUPDIR >$LOGDIR/rsync.$d.$DATE.log
+    /usr/bin/rsync -av --delete --safe-links $excludes $WORKINGDIRDIR/$d $BACKUPDIR >$LOGDIR/rsync.$d.$DATE.log
 
     echo "  compressing log file..."
     gzip -9v $LOGDIR/rsync.$d.$DATE.log
@@ -146,7 +146,7 @@ fi
 cd -
 sync
 
-if [[ "$UNMOUNT" == "true"]]; then
+if [[ "$UNMOUNT" == "true" ]]; then
     echo "Unmounting backup directory $BACKUPDIR"
     umount -v $BACKUPDIR &>> $EMAILMSG
 fi
