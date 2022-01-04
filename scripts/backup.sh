@@ -69,6 +69,26 @@ for d in *; do
 	continue
     fi
 
+        echo $d | grep "folder$"
+    if [[ $? -eq 0 ]]; then
+	continue
+    fi
+
+    echo $d | grep "dest$"
+    if [[ $? -eq 0 ]]; then
+	continue
+    fi
+
+    echo $d | grep "predump$"
+    if [[ $? -eq 0 ]]; then
+	continue
+    fi
+
+    echo $d | grep "postdump$"
+    if [[ $? -eq 0 ]]; then
+	continue
+    fi
+
     echo $d | grep "~$"
     if [[ $? -eq 0 ]]; then
 	continue
@@ -93,26 +113,46 @@ for d in *; do
     else
 	WORKINGDIR=$SRCDIR
     fi
-    
+
+    if [ -f $LISTDIR/$d.folder ]; then
+	echo "found folder for $d"
+	read -r ALTPATH <$LISTDIR/$d.folder
+	FOLDER=$ALTPATH
+
+    else
+	FOLDER=$d
+    fi
+
+    if [ -f $LISTDIR/$d.dest ]; then
+	echo "found dest for $d"
+	read -r ALTPATH <$LISTDIR/$d.dest
+	DESTDIR=$ALTPATH
+
+	# Ensure it has a trailing slash
+	[[ "${DESTPATH}" != */ ]] && DESTPATH="${DESTPATH}/"
+    else
+	DESTDIR=$BACKUPDIR
+    fi
+
     if [ -f $LOGDIR/rsync.$d.$DATE.log.gz ]; then
       echo "  Backup exists, aborting!"
       continue
     fi
 
-    if [ -x $CONFIGDIR/$d-predump ]; then
+    if [ -x $LISTDIR/$d-predump ]; then
       echo "  running predump script..."
-      $CONFIGDIR/$d-predump
+      $LISTDIR/$d-predump
     fi
 
-    echo "/usr/bin/rsync -av --delete --safe-links $excludes $WORKINGDIR/$d $BACKUPDIR"
-    /usr/bin/rsync -av --delete --safe-links $excludes $WORKINGDIRDIR/$d $BACKUPDIR >$LOGDIR/rsync.$d.$DATE.log
+    echo "/usr/bin/rsync -av --delete --safe-links $excludes $WORKINGDIR/$FOLDER $DESTDIR"
+    /usr/bin/rsync -av --delete --safe-links $excludes $WORKINGDIR/$FOLDER $DESTDIR >$LOGDIR/rsync.$d.$DATE.log
 
     echo "  compressing log file..."
     gzip -9v $LOGDIR/rsync.$d.$DATE.log
 
-    if [ -x $CONFIGDIR/config/$d-postdump ]; then
+    if [ -x $LISTDIR/$d-postdump ]; then
       echo "  running postdump script..."
-      $CONFIGDIR/config/$d-postdump
+      $LISTDIR/$d-postdump
     fi
 
 done

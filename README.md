@@ -6,6 +6,8 @@ This script has evolved in bursts over the paste 20 years as my home data storag
 
 The primary goal has always been to rsync a set of directories to a portable hard drive I could swap. Because most of the portable hard drives were smaller than the original sources I needed a way to selectively mirror subsets of data.
 
+This whole script should probably be rewritten in Python and use a yaml config, but... maybe I'll get to that in another decade.
+
 ## Usage
 
     scripts/backup.sh [/path/to/configs] [false]
